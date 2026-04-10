@@ -26,7 +26,7 @@ interface Board {
   -openCells: FogOfWar
   -ships: List<Ship>
   -aliveShipCount: Int
-  -Validator: PlacementValidator
+  -isValidator: PlacementValidator
   +installationShip(Ship): Boolean
   +shoot(coordinates: List<Coordinate>): ShotResult
   // fun() + перечисление с сотояниями, выдающее состояние доски для GUI
@@ -56,7 +56,7 @@ class PlacementValidator{
 Player --> Board : uses
 Board *-- FogOfWar : manages
 Board o-- Ship : contains
-Board ..> PlacementValidator: validates
+Board *-- PlacementValidator: validates
 
 
 @enduml
