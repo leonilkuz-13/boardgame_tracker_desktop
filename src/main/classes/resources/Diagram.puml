@@ -15,6 +15,7 @@ class Player {
   +bomberCharges = 1
   +myBoard: Board
   +enemyBoard: Board
+  +addShip(coordinates: List<Coordinate>): Boolean
   +bomberAttack(coordinates: List<Coordinate>) : ShotResult
   +singleAttack(coordinate: Coordinate): ShotResult
   +scan(coordinates: List<Coordinate>) : Boolean
