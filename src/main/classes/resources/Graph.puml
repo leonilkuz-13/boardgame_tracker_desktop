@@ -1,0 +1,147 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class Coordinate <<datatype>> {
+  +x: Int
+  +y: Int
+  +isValid(boardSize: Int): Boolean
+  -distanceTo(other: Coordinate): Int
+  +dotAdjacentTo(other: Coordinate): Boolean
+}
+
+enum Result {
+    VALID,
+    INVALID,
+    GAME_OVER,
+    WIN
+}
+
+enum CellStatus {
+    EMPTY,
+    SHIP,
+    HIT,
+    MISS,
+    BORDER
+}
+
+class GUI
+class BD
+
+class Game {
+    +player: Player
+    +move(action: Move) : Result
+}
+
+class Board {
+    -cells: MutableMap<Coordinate, CellStatus>
+    -ships: MutableList<Ship>
+    +getCellStatus(coordinate: Coordinate): CellStatus
+    +updateCellStatus(coordinate: Coordinate, newStatus: CellStatus): Unit
+    +getSnapshot(): Map<Coordinate, CellStatus>
+    +hasShip(coordinate: Coordinate): Boolean
+    +addShip(ship: Ship)
+    +getShipAt(coordinate: Coordinate): Ship?
+    +hasAliveShips(): Boolean
+}
+
+class Player {
+    +name: String
+    +radarCharges: Int
+    +bomberCharges: Int
+    +myBoard: Board
+    +enemyBoard: Board
+    -hasRadar(): Boolean
+    -hasBomber(): Boolean
+    +useRadar(): Unit
+    +useBomber(): Unit
+}
+
+class EnemyBoardEngine {
+    +process(action: Move, board: Board): Result
+}
+
+class scan {
+    -isValidScan(coordinates: List<Coordinate>, enemyBoard: Board): Boolean
+    +scan(coordinates: List<Coordinate>, enemyBoard: Board) : ScanResult
+}
+
+class Attack {
+    +handle(action: Move, board: Board): Result
+    -isCellUntouched(coordinate: Coordinate, board: Board): Boolean
+    -isValidAttack(action: Move, board: Board): Boolean
+    -singleAttack(coordinate: Coordinate, board: Board): Result
+    -bomberAttack(coordinates: List<Coordinate>, board: Board): Result
+}
+
+class MyBoardEngine {
+    +process(action: Move, myBoard: Board): Result
+    +installShip(coordinates: List<Coordinate>): Boolean
+    +isValidMyBoardEngine(coordinate: Coordinate, MyBoard: Board): Boolean
+}
+
+abstract class Ship {
+    +receiveHit(coordinate: Coordinate)
+    +isSunk(): Boolean
+}
+
+class Destroyer
+class Cruiser
+class Submarine
+class Carrier
+class BattleWagon
+class SpecialShip
+
+abstract class Move <<sealed>>
+
+class Install <<datatype>> {
+    +ship: Ship
+    +coordinates: List<Coordinate>
+}
+class SingleAttack <<datatype>> {
+    +coordinate: Coordinate
+}
+class GrandAttack <<datatype>> {
+    +coordinates: List<Coordinate>
+}
+class Radar <<datatype>> {
+    +coordinate: Coordinate
+}
+
+class ScanResult <<datatype>> {
+    +status: Result
+    +data: Map<Coordinate, CellStatus>
+}
+
+Move <|-- Install
+Move <|-- SingleAttack
+Move <|-- GrandAttack
+Move <|-- Radar
+
+Ship <|-- Destroyer
+Ship <|-- Cruiser
+Ship <|-- Submarine
+Ship <|-- Carrier
+Ship <|-- BattleWagon
+Ship <|-- SpecialShip
+
+Game *-- Player : владеет
+Player *-- "2" Board : содержит (my & enemy)
+Board o-- Ship
+
+Game o-- EnemyBoardEngine
+Game o-- MyBoardEngine
+Game o-- BD
+
+Game ..> Move : обрабатывает
+GUI <-> Game : взаимодействует
+EnemyBoardEngine ..> scan : использует
+EnemyBoardEngine ..> Attack : использует
+Attack ..> Board : меняет состояние Map
+Attack ..> Ship : вызывает receiveHit
+scan ..> ScanResult : порождает
+MyBoardEngine ..> Ship : размещает
+
+Result <.. Game
+CellStatus <.. Board
+
+@enduml
