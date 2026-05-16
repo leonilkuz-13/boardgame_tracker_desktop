@@ -4,7 +4,6 @@ import board.BoardImpl
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import player.PlayerImpl
 
 class PlayerImplTest {
@@ -29,40 +28,41 @@ class PlayerImplTest {
     }
 
     @Test
-    fun `isUseRadar decreases radar charges`() {
-        player.isUseRadar()
+    fun `useRadar decreases radar charges and returns true on success`() {
+        val result1 = player.useRadar()
+        assertTrue(result1, "Expected useRadar to return true")
         assertEquals(1, player.radarCharges, "Expected 1 radar charge left")
 
-        player.isUseRadar()
+        val result2 = player.useRadar()
+        assertTrue(result2, "Expected useRadar to return true")
         assertEquals(0, player.radarCharges, "Expected 0 radar charges left")
     }
 
     @Test
-    fun `isUseBomber decreases bomber charges`() {
-        player.isUseBomber()
+    fun `useBomber decreases bomber charges and returns true on success`() {
+        val result = player.useBomber()
+        assertTrue(result, "Expected useBomber to return true")
         assertEquals(0, player.bomberCharges, "Expected 0 bomber charges left")
     }
 
     @Test
-    fun `isUseRadar throws ItemDepletedException when out of charges`() {
-        player.isUseRadar()
-        player.isUseRadar()
+    fun `useRadar returns false when out of charges`() {
+        player.useRadar()
+        player.useRadar()
 
-        val exception = assertThrows<PlayerImpl.ItemDepletedException>("Expected ItemDepletedException") {
-            player.isUseRadar()
-        }
+        val result = player.useRadar()
 
-        assertEquals("you don't have radars", exception.message)
+        assertFalse(result, "Expected useRadar to return false when no charges left")
+        assertEquals(0, player.radarCharges, "Charges should not drop below 0")
     }
 
     @Test
-    fun `isUseBomber throws ItemDepletedException when out of charges`() {
-        player.isUseBomber()
+    fun `useBomber returns false when out of charges`() {
+        player.useBomber() // тратим первый (единственный)
 
-        val exception = assertThrows<PlayerImpl.ItemDepletedException>("Expected ItemDepletedException") {
-            player.isUseBomber()
-        }
+        val result = player.useBomber()
 
-        assertEquals("you don't have bomber", exception.message)
+        assertFalse(result, "Expected useBomber to return false when no charges left")
+        assertEquals(0, player.bomberCharges, "Charges should not drop below 0")
     }
 }

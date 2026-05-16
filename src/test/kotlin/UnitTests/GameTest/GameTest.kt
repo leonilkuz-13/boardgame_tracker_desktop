@@ -64,14 +64,19 @@ class GameImplTest {
     }
 
     @Test
-    fun `move catches exceptions from player abilities and returns GameError`() {
+    fun `move returns GameError when out of bomber charges`() {
         game.startGame()
-        fakePlayer1.throwExceptionOnBomber = true
+
+        // Включаем имитацию пустых зарядов
+        fakePlayer1.simulateBomberEmpty = true
 
         val bomberMove = Move.GrandAttack(Coordinate('E', 5))
         val result = game.move(bomberMove)
 
-        assertTrue(result is MoveResult.Error.GameError, "Expected GameError due to exception")
+        assertTrue(result is MoveResult.Error.GameError, "Expected GameError when out of charges")
+        val error = result as MoveResult.Error.GameError
+
+        assertEquals("Out of bomber charges!", error.reason)
     }
 
     @Test
@@ -104,7 +109,6 @@ class GameImplTest {
 }
 
 // --- FAKES ---
-
 class FakePlayer(
     override val name: String,
     override var radarCharges: Int,
@@ -113,15 +117,15 @@ class FakePlayer(
 ) : Player {
     override val myBoard: Board = BoardImpl()
 
-    var throwExceptionOnBomber = false
+    var simulateBomberEmpty = false
 
-    override fun isUseBomber() {
-        if (throwExceptionOnBomber) {
-            throw Exception("Out of charges")
-        }
+    override fun useBomber(): Boolean {
+        return !simulateBomberEmpty
     }
 
-    override fun isUseRadar() { }
+    override fun useRadar(): Boolean {
+        return true
+    }
 }
 
 class FakeMyEngine : MyBoardEngine {
