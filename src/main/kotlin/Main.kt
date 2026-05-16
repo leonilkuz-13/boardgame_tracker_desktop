@@ -1,3 +1,8 @@
+package boardgame_tracker_desktop
+
+import console.ConsoleImpl
+
 fun main() {
-    println("Hello World!")
+    val app = ConsoleImpl()
+    app.start()
 }

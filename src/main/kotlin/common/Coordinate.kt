@@ -3,11 +3,26 @@ package common
 import kotlin.math.max
 import kotlin.math.abs
 
-data class Coordinate(val x: Int, val y: Int) {
+data class Coordinate(val x: Char, val y: Int) {
+
+    override fun toString(): String {
+        return "$x$y"
+    }
+
+    companion object {
+        fun parse(line: String): Coordinate? {
+            val cleanLine = line.trim().uppercase()
+            if (cleanLine.length < 2) return null
+            val x = cleanLine[0]
+            val y = cleanLine.substring(1).toIntOrNull() ?: return null
+            val coordinate = Coordinate(x, y)
+            return if (coordinate.isValid()) coordinate else null
+        }
+    }
 
     // корректность передачи координат
     fun isValid(): Boolean {
-        return (x in 0..14 && y in 0..14)
+        return (x in 'A'..'O' && y in 1..15)
     }
 
     // расстояние между точками метрикой Чебышева
@@ -35,5 +50,4 @@ data class Coordinate(val x: Int, val y: Int) {
         neighbors.remove(Coordinate(this.x, this.y))
         return neighbors
     }
-
 }
