@@ -8,6 +8,6 @@ interface Player {
     var bomberCharges: Int // количество бомб
     val myBoard: Board // своя доска
     val enemyBoard: Board // чужая доска
-    fun isUseRadar(): Unit // валидация использования радара
-    fun isUseBomber(): Unit // валидация использования бомбардировщика
+    fun useRadar(): Boolean // валидация использования радара (boolean -- костыль для избавления try-catch выше, потому не вопрос)
+    fun useBomber(): Boolean // валидация использования бомбардировщика
 }

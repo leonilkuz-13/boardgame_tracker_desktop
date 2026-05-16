@@ -60,3 +60,7 @@ compose.desktop {
         }
     }
 }
+
+tasks.withType<JavaExec> {
+    standardInput = System.`in`
+}

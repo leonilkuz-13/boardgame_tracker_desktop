@@ -40,6 +40,7 @@ class GameManagerImpl(
     }
 
     // связь с репозиторием: создание игрока, если его не было
+    // исправление: один и тот же игрок больше не может подключится дважды
     override fun loginPlayer(playerName: String): ManagerResult {
         val cleanName = if (playerName.isBlank()) "Guest" else playerName.trim()
 
@@ -48,14 +49,16 @@ class GameManagerImpl(
             stat.createPlayer(cleanName)
         }
 
+        if (player1Name == cleanName || player2Name == cleanName) {
+            return ManagerResult.Failure("Player $cleanName is already in the lobby")
+        }
+
         if (player1Name == null) {
             player1Name = cleanName
             return ManagerResult.Success
         } else if (player2Name == null) {
             player2Name = cleanName
             return ManagerResult.Success
-        } else if (player1Name == cleanName || player2Name == cleanName) {
-            return ManagerResult.Failure("Player $cleanName is already in the lobby")
         } else {
             return ManagerResult.Failure("There are no seats. The match is already taking place: $player1Name and $player2Name.")
         }

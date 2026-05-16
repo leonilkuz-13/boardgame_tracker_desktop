@@ -28,14 +28,15 @@ class GameImpl(
         val attacker = if (turn == TurnOwner.PLAYER) player1 else player2
         val defender = if (turn == TurnOwner.PLAYER) player2 else player1
 
-        try {
-            if (action is Move.GrandAttack) {
-                attacker.isUseBomber()
-            } else if (action is Move.Radar) {
-                attacker.isUseRadar()
+        // исправление: вот тут я убрал ненужный try-catch -- неуместен
+        if (action is Move.GrandAttack) {
+            if (!attacker.useBomber()) {
+                return MoveResult.Error.GameError("Out of bomber charges!")
             }
-        } catch (e: Exception) {
-            return MoveResult.Error.GameError(e.message ?: "Out of charges")
+        } else if (action is Move.Radar) {
+            if (!attacker.useRadar()) {
+                return MoveResult.Error.GameError("Out of radar charges!")
+            }
         }
 
         val result = when (action) {

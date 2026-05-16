@@ -16,17 +16,19 @@ class PlayerImpl(override val name: String, override val myBoard : Board, overri
         return bomberCharges > 0
     }
 
-    override fun isUseRadar(): Unit {
-        if (!hasRadar()) {
-            throw ItemDepletedException("you don't have radars")
+    override fun useBomber(): Boolean {
+        if (bomberCharges > 0) {
+            bomberCharges--
+            return true
         }
-        radarCharges--
+        return false
     }
 
-    override fun isUseBomber(): Unit {
-        if (!hasBomber()) {
-            throw ItemDepletedException("you don't have bomber")
+    override fun useRadar(): Boolean {
+        if (radarCharges > 0) {
+            radarCharges--
+            return true
         }
-        bomberCharges--
+        return false
     }
 }

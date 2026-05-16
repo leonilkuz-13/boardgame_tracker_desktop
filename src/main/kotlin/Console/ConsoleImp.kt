@@ -225,12 +225,12 @@ class ConsoleImpl : Console {
 
 	private fun startNewGame(): ManagerResult {
 
-		val log1 = loginUntilSuccess("> enter the name of the first player")
+		val log1 = loginUntilSuccess("enter the name of the first player")
 		if (log1 is ManagerResult.Cancel) {
 			return ManagerResult.Cancel
 		}
 
-		val log2 = loginUntilSuccess("> enter the name of the second player")
+		val log2 = loginUntilSuccess("enter the name of the second player")
 		if (log2 is ManagerResult.Cancel) {
 			return ManagerResult.Cancel
 		}
