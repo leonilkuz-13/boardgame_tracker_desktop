@@ -241,6 +241,8 @@ class ConsoleImpl : Console {
 	private fun setupFleetPhase() {
 		val currentPlayer = gameManager.getCurrentPlayerName()
 
+		println("> $currentPlayer, please place your ships!")
+
 		for (shipType in ShipType.entries) {
 			var placedCount = 0
 
