@@ -41,9 +41,6 @@ class ShipPlacementImpl: ShipPlacement {
     }
 
     override fun placeShip(ship: Ship, board: Board): MoveResult {
-        if (!isValidPlacement(ship, board)) {
-            return MoveResult.Error.GameError("Invalid coordinates for ship placement")
-        }
 
         val addedBorders = mutableSetOf<Coordinate>()
 
