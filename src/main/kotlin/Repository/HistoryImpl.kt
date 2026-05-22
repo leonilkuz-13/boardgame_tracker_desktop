@@ -11,7 +11,6 @@ import common.Coordinate
 import common.Move
 import common.MoveResult
 import common.ShipType
-import java.sql.DriverManager
 import java.sql.Statement
 
 class HistoryImpl: History {
@@ -24,9 +23,7 @@ class HistoryImpl: History {
         val insertMatchQuery = "INSERT INTO MATCHES (player1_name, player2_name, winner_name) VALUES (?, ?, ?)"
         val insertMovesQuery = "INSERT INTO Moves (match_id, turn_number, type_action, coordinates, result_status, type_ship) VALUES (?, ?, ?, ?, ?, ?)"
 
-        val url = "jdbc:sqlite:battleship.db"
-
-        DriverManager.getConnection(url).use { connection ->
+        DatabaseManager.getConnection().use { connection ->
             try {
                 connection.autoCommit = false // флаг фалс переводит базу в транзакционный режим
 
@@ -89,8 +86,7 @@ class HistoryImpl: History {
 
         val selectQuery = "SELECT type_action, coordinates, result_status, type_ship FROM MOVES WHERE match_id = ? ORDER BY turn_number ASC" // выбираем из колонки moves, предварительно отсортировав ее по возрастанию
 
-        val url = "jdbc:sqlite:battleship.db"
-        DriverManager.getConnection(url).use { connection ->
+        DatabaseManager.getConnection().use { connection ->
             val statement = connection.prepareStatement(selectQuery)
             statement.setInt(1, matchId)
 
