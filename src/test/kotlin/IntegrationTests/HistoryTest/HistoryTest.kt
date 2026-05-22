@@ -1,24 +1,28 @@
 package HistoryTest
 
+import Repository.DatabaseManager
 import Repository.HistoryImpl
 import battleship.*
 import common.*
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
-import java.sql.DriverManager
 
-class HistoryTests {
+class HistoryTest {
 
     private lateinit var history: HistoryImpl
-    private val dbUrl = "jdbc:sqlite:battleship.db"
 
     @BeforeEach
     fun clearData() {
+        // 1. Переключаем Менеджер на тестовую базу
+        DatabaseManager.dbUrl = "jdbc:sqlite:test_battleship.db"
+        DatabaseManager.initDatabase()
         history = HistoryImpl()
-        DriverManager.getConnection(dbUrl).use { conn ->
+
+        DatabaseManager.getConnection().use { conn ->
             val statement = conn.createStatement()
             statement.execute("DELETE FROM MOVES")
             statement.execute("DELETE FROM MATCHES")
+            statement.execute("DELETE FROM Players")
         }
     }
 
@@ -26,6 +30,13 @@ class HistoryTests {
     fun `full match save and replay test`() {
         val player1 = "Commander_77"
         val player2 = "AI_DeepBlue"
+
+        DatabaseManager.getConnection().use { conn ->
+            val stmt = conn.prepareStatement("INSERT INTO Players (name) VALUES (?), (?)")
+            stmt.setString(1, player1)
+            stmt.setString(2, player2)
+            stmt.executeUpdate()
+        }
 
         val coordA1 = Coordinate('A', 1)
         val coordB2 = Coordinate('B', 2)
@@ -52,7 +63,7 @@ class HistoryTests {
 
         history.saveMatch(player1, player2, player1, testLog)
 
-        val matchId = DriverManager.getConnection(dbUrl).use { conn ->
+        val matchId = DatabaseManager.getConnection().use { conn ->
             val rs = conn.createStatement().executeQuery("SELECT id FROM MATCHES LIMIT 1")
             if (rs.next()) rs.getInt("id") else fail("Match not found in database")
         }
