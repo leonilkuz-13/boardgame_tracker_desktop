@@ -1,21 +1,22 @@
-package StatisticsTest
+package IntegrationTests.StatisticsTests
 
+import Repository.DatabaseManager
 import Repository.StatisticsImpl
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
-import java.sql.DriverManager
 
-class StatisticsImplTest {
-
+class StatisticsImplTests {
     private lateinit var statistics: StatisticsImpl
-    private val dbUrl = "jdbc:sqlite:battleship.db"
 
     @BeforeEach
     fun setup() {
-        statistics = StatisticsImpl()
-        DriverManager.getConnection(dbUrl).use { conn ->
+        DatabaseManager.dbUrl = "jdbc:sqlite:test_battleship.db"
+        DatabaseManager.initDatabase()
+
+        DatabaseManager.getConnection().use { conn ->
             conn.createStatement().execute("DELETE FROM Players")
         }
+        statistics = StatisticsImpl()
     }
 
     @Test

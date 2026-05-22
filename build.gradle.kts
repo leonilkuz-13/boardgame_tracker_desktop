@@ -34,7 +34,7 @@ kotlin {
     jvmToolchain(17)
 }
 
-// Создание исполняемого JAR со всеми зависимостями
+// Create executable JAR with all dependencies
 tasks.register<Jar>("fatJar") {
     manifest {
         attributes["Main-Class"] = "boardgame_tracker_desktop.MainKt"

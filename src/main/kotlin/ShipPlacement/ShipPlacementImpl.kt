@@ -24,7 +24,7 @@ class ShipPlacementImpl: ShipPlacement {
             else -> 0
         }
 
-        val currentShipsCount = board.getShips().count { it.type == ship.type }
+        val currentShipsCount = board.getShips().count { it.javaClass == ship.javaClass }
         if (currentShipsCount >= maxAllowed) {
             return false
         }
@@ -41,6 +41,10 @@ class ShipPlacementImpl: ShipPlacement {
     }
 
     override fun placeShip(ship: Ship, board: Board): MoveResult {
+
+        if (!isValidPlacement(ship, board)) {
+            return MoveResult.Error.GameError("Invalid coordinates for ship placement")
+        }
 
         val addedBorders = mutableSetOf<Coordinate>()
 
