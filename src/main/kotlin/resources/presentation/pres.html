@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Защита Кейса - Морской Бой</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* 1. ГЛОБАЛЬНЫЕ НАСТРОЙКИ (720p) */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #1a1a2e; /* Более глубокий темный фон страницы */
+            display: grid;
+            gap: 20px;
+            grid-template-columns: 1fr;
+            margin: 0;
+            min-height: 100vh;
+            padding: 20px 0;
+            place-items: center;
+        }
+
+        .slide-container {
+            align-items: center;
+            background-color: #0D1117;
+            background-image: radial-gradient(circle at top right, #1F2937, transparent 60%);
+            border-radius: 8px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            font-family: 'Urbanist', sans-serif;
+            height: 720px;
+            justify-content: center;
+            overflow: hidden;
+            padding: 60px;
+            position: relative;
+            width: 1280px;
+        }
+
+        /* 2. ТИПОГРАФИКА ДЛЯ ТЕКСТОВЫХ СЛАЙДОВ (Крупная) */
+        .slide-container h1,
+        .slide-container h2,
+        .slide-container h3,
+        .slide-container h4 {
+            color: #FFFFFF;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .slide-container h1 span,
+        .slide-container h2 span {
+            color: #58A6FF;
+        }
+
+        .slide-container p,
+        .slide-container .subtitle,
+        .slide-container li {
+            color: #C9D1D9;
+            font-family: 'Lato', sans-serif;
+        }
+
+        .slide-container h1 {
+            font-size: 75px;
+            line-height: 1.1;
+        }
+
+        .slide-title {
+            font-size: 60px;
+            line-height: 1.1;
+            margin-bottom: 40px;
+            text-align: left;
+            width: 100%;
+        }
+
+        .slide-container h3 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .slide-container li {
+            font-size: 22px;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        .slide-container .subtitle {
+            font-size: 24px;
+            font-weight: 400;
+            line-height: 1.4;
+            margin: 30px auto 0;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .title-layout {
+            text-align: center;
+            width: 100%;
+            align-self: center;
+        }
+
+        /* 3. ТИПОГРАФИКА ДЛЯ СЛАЙДОВ С ФОТО (Мелкая + пропорция 35/65) */
+        .img-slide .slide-title { font-size: 48px; margin-bottom: 25px; }
+        .img-slide li, .img-slide p { font-size: 18px; line-height: 1.4; margin-bottom: 15px; }
+        .img-slide b { color: #58A6FF; }
+
+        .two-column {
+            display: flex;
+            gap: 40px;
+            width: 100%;
+            height: 100%;
+            align-items: center;
+        }
+
+        /* Текстовая колонка (35%) */
+        .content-side-img {
+            display: flex;
+            flex-direction: column;
+            width: 35%;
+            flex-shrink: 0;
+        }
+
+        /* Колонка для диаграммы (65%) */
+        .diagram-side-img {
+            width: 65%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(22, 27, 34, 0.5);
+            border: 2px dashed #58A6FF;
+            border-radius: 20px;
+            padding: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .diagram-side-img img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        /* Списки */
+        .bullet-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .bullet-list li {
+            padding-left: 35px;
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .img-slide .bullet-list li {
+            margin-bottom: 15px; /* Чуть плотнее для слайдов с картинками */
+        }
+
+        .bullet-list li::before {
+            color: #7F52FF;
+            content: '•';
+            font-size: 50px;
+            left: 0;
+            position: absolute;
+            top: -16px;
+        }
+
+        .bullet-list li b {
+            color: #58A6FF;
+        }
+
+        /* 4. МАКЕТЫ ПЛИТОК */
+        .slide-container.tile-layout {
+            display: grid;
+            grid-template-columns: 30% 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .slide-container .slide-title.small-title {
+            font-size: 55px;
+            margin-bottom: 0;
+        }
+
+        .slide-container.tile-layout .tiled-content {
+            display: grid;
+            gap: 25px;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .slide-container .tile {
+            background-color: #161B22;
+            border-radius: 20px;
+            border: 1px solid #30363D;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 35px;
+            transition: border-color 0.3s ease;
+        }
+
+        .slide-container .tile:hover {
+            border-color: #7F52FF;
+        }
+
+        .slide-container .tile .title-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center; /* Центрируем иконку и заголовок */
+        }
+
+        .slide-container .tile .main-title {
+            color: #58A6FF;
+            font-size: 26px;
+            font-weight: 700;
+            font-family: 'Urbanist', sans-serif;
+            margin: 0;
+        }
+
+        .slide-container .tile .icon-container {
+            align-items: center;
+            background-color: #7F52FF;
+            border-radius: 12px;
+            color: #FFF;
+            display: flex;
+            font-size: 24px;
+            height: 50px;
+            justify-content: center;
+            width: 50px;
+            flex-shrink: 0;
+        }
+
+        .slide-container .tile .tile-content {
+            color: #C9D1D9;
+            font-size: 18px;
+            font-weight: 400;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* 5. ПОЛНЫЙ СЛАЙД ДЛЯ ГРАФИКА */
+        .full-img-container {
+            width: 100%;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(22, 27, 34, 0.5);
+            border: 2px solid #30363D;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .full-img-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+
+<div class="slide-container title-slide" id="slide1">
+    <div class="title-layout">
+        <h1>Трекер Игр: <span>Морской Бой</span></h1>
+        <p class="subtitle">
+            Защита технического кейса.
+        </p>
+    </div>
+</div>
+
+<div class="slide-container tile-layout" id="slide2">
+    <div>
+        <h2 class="slide-title small-title">Ключевые <span>Фичи</span></h2>
+        <p style="font-size: 28px; line-height: 1.4; color: #C9D1D9; margin-top: 25px; font-family: 'Lato', sans-serif;">
+            Все тот же знакомый<br>морской бой, но:
+        </p>
+    </div>
+    <div class="tiled-content" style="grid-template-columns: 1fr;">
+        <div class="tile" style="padding: 25px 35px;">
+            <div class="title-container">
+                <p class="main-title">Размер поля 15 × 15</p>
+                <span class="icon-container"><i class="fa-solid fa-border-all"></i></span>
+            </div>
+        </div>
+        <div class="tile" style="padding: 25px 35px;">
+            <div class="title-container">
+                <p class="main-title">Бомбардировщик и Сканер</p>
+                <span class="icon-container"><i class="fa-solid fa-crosshairs"></i></span>
+            </div>
+        </div>
+        <div class="tile" style="padding: 25px 35px;">
+            <div class="title-container">
+                <p class="main-title">Кастомные корабли</p>
+                <span class="icon-container"><i class="fa-solid fa-ship"></i></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="slide-container img-slide" id="slide3">
+    <div class="two-column">
+        <div class="content-side-img">
+            <h2 class="slide-title">Архитектура:<br><span>UI и Контроллер</span></h2>
+            <div>
+                <ul class="bullet-list">
+                    <li><b>Console (View):</b> Отдельный слой UI.</li>
+                    <li><b>GameManager:</b> Контроллер системы. Единая точка входа, которая принимает команды от Console, передает их в модель и возвращает ответ для отрисовки.</li>
+                    <li><b>Game:</b> Внутренний контроллер партии (Машина состояний). Обеспечивает валидацию действий игроков согласно правилам.</li>
+                </ul>
+            </div>
+        </div>
+        <div class="diagram-side-img">
+            <img src="controller.jpeg" alt="Controllers Diagram">
+        </div>
+    </div>
+</div>
+
+<div class="slide-container img-slide" id="slide4">
+    <div class="two-column">
+        <div class="content-side-img">
+            <h2 class="slide-title">Архитектура:<br><span>Движки и Сервисы</span></h2>
+            <div>
+                <ul class="bullet-list">
+                    <li><b>Engines (My/Enemy):</b> Отвечают за правильный переход к действию, проверяя корректность переданного от пользователя хода.</li>
+                    <li><b>Attack:</b> Сервис, работающий с <i>истинным</i> состоянием доски. Наносит удары и изменяет статусы клеток.</li>
+                    <li><b>Scan:</b> Принимает центр координат, обрисовывает зону радара и возвращает список.</li>
+                    <li><b>ShipPlacement:</b> Устанавливает корабли на сетку и строго отслеживает лимиты доступных типов судов.</li>
+                </ul>
+            </div>
+        </div>
+        <div class="diagram-side-img">
+            <img src="engines.jpeg" alt="Engines Diagram">
+        </div>
+    </div>
+</div>
+
+<div class="slide-container tile-layout" id="slide5">
+    <h2 class="slide-title small-title">Доменная <span>Модель</span></h2>
+    <div class="tiled-content">
+        <div class="tile">
+            <div class="title-container" style="align-items: flex-start;">
+                <p class="main-title">Board</p>
+                <span class="icon-container"><i class="fa-solid fa-chess-board"></i></span>
+            </div>
+            <p class="tile-content">Управляет сеткой координат, обновляет статусы, мониторит поражение и самостоятельно инициализируется.</p>
+        </div>
+        <div class="tile">
+            <div class="title-container" style="align-items: flex-start;">
+                <p class="main-title">Player</p>
+                <span class="icon-container"><i class="fa-solid fa-user-astronaut"></i></span>
+            </div>
+            <p class="tile-content">Хранит имя пользователя, привязанные доски и проверяет количество оставшихся спец-предметов.</p>
+        </div>
+        <div class="tile">
+            <div class="title-container" style="align-items: flex-start;">
+                <p class="main-title">Ship & Types</p>
+                <span class="icon-container"><i class="fa-solid fa-ship"></i></span>
+            </div>
+            <p class="tile-content">Полиморфные классы. Хранят состояние своих клеток и метод <code>isSunk()</code> для проверки потопления.</p>
+        </div>
+        <div class="tile">
+            <div class="title-container" style="align-items: flex-start;">
+                <p class="main-title">Coordinate</p>
+                <span class="icon-container"><i class="fa-solid fa-location-crosshairs"></i></span>
+            </div>
+            <p class="tile-content">Технический класс для парсинга. Вычисляет расстояние между точками по <i>метрике Чебышева</i>.</p>
+        </div>
+    </div>
+</div>
+
+<div class="slide-container img-slide" id="slide6">
+    <div class="two-column">
+        <div class="content-side-img">
+            <h2 class="slide-title">Работа с <span>БД</span></h2>
+            <div>
+                <ul class="bullet-list">
+                    <li><b>History Repository:</b> Предназначен для транзакционной записи ходов в базу и извлечения данных для системы реплеев.</li>
+                    <li><b>Statistics Repository:</b> Выполняет агрегирующие запросы для получения статистики по конкретным игрокам и рейтингам.</li>
+                </ul>
+            </div>
+        </div>
+        <div class="diagram-side-img">
+            <img src="data.jpeg" alt="Data Diagram">
+        </div>
+    </div>
+</div>
+
+<div class="slide-container img-slide" id="slide7">
+    <h2 class="slide-title">Полная <span>Архитектура</span></h2>
+    <div class="full-img-container">
+        <img src="GRAPH.png" alt="Полная архитектурная схема проекта">
+    </div>
+</div>
+
+<div class="slide-container title-slide" id="slide8">
+    <div class="title-layout">
+        <h1 style="font-size: 100px;">Вопросы <span>и Ответы</span></h1>
+        <p class="subtitle" style="font-size: 30px;">
+            Спасибо за внимание! <br> Готов ответить на ваши вопросы.
+        </p>
+    </div>
+</div>
+
+</body>
+</html>
+```
