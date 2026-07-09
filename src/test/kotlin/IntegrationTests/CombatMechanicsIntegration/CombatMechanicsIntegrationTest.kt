@@ -23,12 +23,10 @@ class CombatMechanicsIntegrationTest {
     @BeforeEach
     fun setup() {
         val p1MyBoard = BoardImpl()
-        val p1EnemyBoard = BoardImpl()
-        val player1 = PlayerImpl("Player 1", p1MyBoard, p1EnemyBoard)
+        val player1 = PlayerImpl("Player 1", p1MyBoard)
 
         board2 = BoardImpl()
-        val p2EnemyBoard = BoardImpl()
-        val player2 = PlayerImpl("Player 2", board2, p2EnemyBoard)
+        val player2 = PlayerImpl("Player 2", board2)
 
         game = GameImpl(player1, player2, MyBoardEngineImpl(), EnemyBoardEngineImpl())
     }

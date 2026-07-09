@@ -1,6 +1,6 @@
 package boardgame_tracker_desktop
 
-import console.ConsoleImpl
+import Console.ConsoleImpl
 
 fun main() {
     val app = ConsoleImpl()

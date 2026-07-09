@@ -25,20 +25,20 @@ class HistoryImpl: History {
 
         DatabaseManager.getConnection().use { connection ->
             try {
-                connection.autoCommit = false // флаг фалс переводит базу в транзакционный режим
+                connection.autoCommit = false
 
                 val statement = connection.prepareStatement(
                     insertMatchQuery,
                     Statement.RETURN_GENERATED_KEYS
                 ) // prepareStatement делает шаблон для запроса.
-                statement.setString(1, playerName1) // заполнение вопросиков в запросе
+                statement.setString(1, playerName1)
                 statement.setString(2, playerName2)
                 statement.setString(3, winnerName)
                 statement.executeUpdate()
 
                 var currentMatchId = -1
                 val key = statement.generatedKeys
-                if (key.next()) { // стоим на заголовке, если строка появилась, то смотрим на первую колонку
+                if (key.next()) {
                     currentMatchId = key.getInt(1)
                 }
 

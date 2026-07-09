@@ -14,7 +14,6 @@ class AttackImpl: Attack {
         return status == CellStatus.EMPTY || status == CellStatus.SHIP || status == CellStatus.BORDER
     }
 
-    // проверка на правильную атаку (непонятно почему, я не прокинул ее в тесты. Прошу прощения, но ломать ничего не хочу)
     private fun isValidAttack(action: Move, board: Board): Boolean {
         return when (action) {
             is Move.SingleAttack -> {

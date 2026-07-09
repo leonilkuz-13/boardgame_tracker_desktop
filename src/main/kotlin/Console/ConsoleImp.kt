@@ -1,4 +1,4 @@
-package console
+package Console
 
 import GameManager.GameManagerImpl
 import Repository.History
@@ -19,7 +19,6 @@ import common.MoveResult
 import common.PlayerStats
 import common.ShipType
 import common.SpecialShape
-import console.Console
 import kotlin.math.min
 
 class ConsoleImpl : Console {

@@ -19,14 +19,16 @@ class GameImpl(
     private var turn: TurnOwner = TurnOwner.PLAYER // флажки по текущему игроку
     private var winner: TurnOwner? = null // победитель (на протяжении всей игры null, обновляется в конце)
     private val historyLog = mutableListOf<Pair<Move, MoveResult>>()
+    private var currentPlayer: Player = player1
+    private var waitingPlayer: Player = player2
 
     override fun move(action: Move): MoveResult {
         if (state == GameState.FINISHED) {
             return MoveResult.Error.GameError("the game is already over!")
         }
 
-        val attacker = if (turn == TurnOwner.PLAYER) player1 else player2
-        val defender = if (turn == TurnOwner.PLAYER) player2 else player1
+        val attacker = currentPlayer
+        val defender = waitingPlayer
 
         // исправление: вот тут я убрал ненужный try-catch -- неуместен
         if (action is Move.GrandAttack) {
@@ -110,6 +112,10 @@ class GameImpl(
     }
 
     override fun switchTurn() {
+        val temp = currentPlayer
+        currentPlayer = waitingPlayer
+        waitingPlayer = temp
+
         turn = if (turn == TurnOwner.PLAYER) TurnOwner.OPPONENT else TurnOwner.PLAYER
     }
 }

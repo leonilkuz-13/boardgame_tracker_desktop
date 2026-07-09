@@ -2,7 +2,7 @@ package player
 
 import board.Board
 
-class PlayerImpl(override val name: String, override val myBoard : Board, override val enemyBoard: Board): Player {
+class PlayerImpl(override val name: String, override val myBoard : Board): Player {
     override var radarCharges = 2
     override var bomberCharges = 1
 

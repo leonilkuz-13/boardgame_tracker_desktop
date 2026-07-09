@@ -7,7 +7,6 @@ import common.MoveResult
 import common.Move
 
 
-// передать Move.Install в action ????
 class MyBoardEngineImpl: MyBoardEngine {
     private val installHandler: ShipPlacement = ShipPlacementImpl()
 

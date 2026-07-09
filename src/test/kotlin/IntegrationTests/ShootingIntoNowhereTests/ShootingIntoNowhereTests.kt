@@ -21,8 +21,8 @@ class ShootingIntoNowhereTests {
 
     @BeforeEach
     fun setup() {
-        player1 = PlayerImpl("Player 1", BoardImpl(), BoardImpl())
-        player2 = PlayerImpl("Player 2", BoardImpl(), BoardImpl())
+        player1 = PlayerImpl("Player 1", BoardImpl())
+        player2 = PlayerImpl("Player 2", BoardImpl())
         game = GameImpl(player1, player2, MyBoardEngineImpl(), EnemyBoardEngineImpl())
     }
 

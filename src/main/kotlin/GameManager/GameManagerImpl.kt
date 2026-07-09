@@ -24,12 +24,10 @@ class GameManagerImpl(
 
     private fun createMatch(name1: String, name2: String): Game {
         val p1MyBoard = BoardImpl()
-        val p1EnemyBoard = BoardImpl()
-        val player1 = PlayerImpl(name1, p1MyBoard, p1EnemyBoard)
+        val player1 = PlayerImpl(name1, p1MyBoard)
 
         val p2MyBoard = BoardImpl()
-        val p2EnemyBoard = BoardImpl()
-        val player2 = PlayerImpl(name2, p2MyBoard, p2EnemyBoard)
+        val player2 = PlayerImpl(name2, p2MyBoard)
 
         return GameImpl(
             player1 = player1,
@@ -40,7 +38,6 @@ class GameManagerImpl(
     }
 
     // связь с репозиторием: создание игрока, если его не было
-    // исправление: один и тот же игрок больше не может подключится дважды
     override fun loginPlayer(playerName: String): ManagerResult {
         val cleanName = if (playerName.isBlank()) "Guest" else playerName.trim()
 

@@ -15,9 +15,8 @@ class PlayerImplTest {
     @BeforeEach
     fun setup() {
         myBoard = BoardImpl()
-        enemyBoard = BoardImpl()
 
-        player = PlayerImpl("Test Player", myBoard, enemyBoard)
+        player = PlayerImpl("Test Player", myBoard)
     }
 
     @Test

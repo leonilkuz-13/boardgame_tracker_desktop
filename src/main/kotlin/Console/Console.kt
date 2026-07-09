@@ -1,4 +1,4 @@
-package console
+package Console
 
 import common.Move
 import common.MoveResult

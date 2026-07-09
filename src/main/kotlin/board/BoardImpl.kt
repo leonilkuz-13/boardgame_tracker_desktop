@@ -7,10 +7,12 @@ import common.Coordinate
 class BoardImpl : Board {
     private val cells: MutableMap<Coordinate, CellStatus> = mutableMapOf()
     private val ships: MutableList<Ship> = mutableListOf()
+    private val endCoordinateOX = 'O'
+    private val endCoordinateOY = 15
 
     init {
-        for (x in 'A'..'O') {
-            for (y in 1 until 16) {
+        for (x in 'A'..endCoordinateOX) {
+            for (y in 1 .. endCoordinateOY) {
                 cells[Coordinate(x, y)] = CellStatus.EMPTY
             }
         }
@@ -46,6 +48,6 @@ class BoardImpl : Board {
     }
 
     override fun isWithinBounds(coordinate: Coordinate): Boolean {
-        return coordinate.x in 'A'..'O' && coordinate.y in 1..15
+        return coordinate.x in 'A'..endCoordinateOX && coordinate.y in 1..endCoordinateOY
     }
 }

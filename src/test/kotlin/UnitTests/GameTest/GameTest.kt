@@ -28,8 +28,8 @@ class GameImplTest {
         val dummyEnemyBoard1 = BoardImpl()
         val dummyEnemyBoard2 = BoardImpl()
 
-        fakePlayer1 = FakePlayer("Player 1", 1, 1, dummyEnemyBoard1)
-        fakePlayer2 = FakePlayer("Player 2", 1, 1, dummyEnemyBoard2)
+        fakePlayer1 = FakePlayer("Player 1", 1, 1)
+        fakePlayer2 = FakePlayer("Player 2", 1, 1)
 
         fakeMyEngine = FakeMyEngine()
         fakeEnemyEngine = FakeEnemyEngine()
@@ -113,7 +113,6 @@ class FakePlayer(
     override val name: String,
     override var radarCharges: Int,
     override var bomberCharges: Int,
-    override val enemyBoard: Board
 ) : Player {
     override val myBoard: Board = BoardImpl()
 
