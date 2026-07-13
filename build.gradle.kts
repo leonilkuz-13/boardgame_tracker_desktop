@@ -1,58 +1,93 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
-    kotlin("jvm") version "1.9.24"
-    java
+    kotlin("multiplatform") version "1.9.24"
+    id("com.android.application") version "8.2.2"
     id("org.jetbrains.compose") version "1.6.11"
 }
 
 group = "org.example"
 version = "1.0-SNAPSHOT"
 
-repositories {
-    google()
-    mavenCentral()
-    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-}
-
-dependencies {
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    implementation("org.xerial:sqlite-jdbc:3.45.1.0")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    implementation("org.slf4j:slf4j-nop:1.7.36")
-    implementation(compose.desktop.currentOs)
-    implementation(compose.material)
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
-
 kotlin {
-    jvmToolchain(17)
+    androidTarget {
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = "17"
+            }
+        }
+    }
+
+    jvm("desktop") {
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = "17"
+            }
+        }
+    }
+
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(compose.runtime)
+                implementation(compose.foundation)
+                implementation(compose.material3)
+                implementation(compose.ui)
+            }
+        }
+
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation("org.junit.jupiter:junit-jupiter:5.10.2")
+                implementation("org.junit.platform:junit-platform-launcher")
+            }
+        }
+
+        val androidMain by getting {
+            dependencies {
+                implementation(compose.preview)
+                implementation("androidx.activity:activity-compose:1.9.0")
+            }
+        }
+
+        val desktopMain by getting {
+            dependencies {
+                implementation(compose.desktop.currentOs)
+                implementation("org.xerial:sqlite-jdbc:3.45.1.0")
+                implementation("org.slf4j:slf4j-nop:1.7.36")
+            }
+        }
+
+        val desktopTest by getting {
+            dependencies {
+                // Inherits from commonTest
+            }
+        }
+    }
 }
 
-// Create executable JAR with all dependencies
-tasks.register<Jar>("fatJar") {
-    manifest {
-        attributes["Main-Class"] = "boardgame_tracker_desktop.MainKt"
-        attributes["Implementation-Version"] = version
-    }
-    archiveFileName.set("app.jar")
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+android {
+    namespace = "org.example.boardgame"
+    compileSdk = 34
 
-    from(sourceSets["main"].output)
-    dependsOn(configurations.runtimeClasspath)
-    from({
-        configurations.runtimeClasspath.get().filter { it.isFile }.map { zipTree(it) }
-    })
+    defaultConfig {
+        applicationId = "org.example.boardgame"
+        minSdk = 24
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
 }
 
 compose.desktop {
     application {
-        mainClass = "boardgame_tracker_desktop.MainKt"
+        mainClass = "org.example.boardgame.MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Exe, TargetFormat.Dmg, TargetFormat.Deb)
             packageName = "BattleshipApp"
@@ -63,4 +98,8 @@ compose.desktop {
 
 tasks.withType<JavaExec> {
     standardInput = System.`in`
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
