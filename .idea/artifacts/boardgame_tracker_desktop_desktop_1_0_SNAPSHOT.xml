@@ -1,6 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="boardgame_tracker_desktop-desktop-1.0-SNAPSHOT">
-    <output-path>$PROJECT_DIR$/build/libs</output-path>
-    <root id="archive" name="boardgame_tracker_desktop-desktop-1.0-SNAPSHOT.jar" />
-  </artifact>
-</component>

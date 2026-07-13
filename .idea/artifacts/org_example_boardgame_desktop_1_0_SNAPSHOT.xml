@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="org.example.boardgame-desktop-1.0-SNAPSHOT">
-    <output-path>$PROJECT_DIR$/build/libs</output-path>
-    <root id="archive" name="org.example.boardgame-desktop-1.0-SNAPSHOT.jar">
-      <element id="module-output" name="org.example.boardgame.desktopMain" />
-    </root>
-  </artifact>
-</component>
