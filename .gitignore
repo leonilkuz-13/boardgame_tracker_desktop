@@ -28,4 +28,4 @@ replay_pid*
 
 .gradle/
 build/
-out/
+out/gradle/config.properties
