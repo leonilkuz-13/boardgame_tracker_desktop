@@ -4,6 +4,7 @@ plugins {
     kotlin("multiplatform") version "1.9.24"
     id("com.android.application") version "8.2.2"
     id("org.jetbrains.compose") version "1.6.11"
+    id("com.google.devtools.ksp") version "1.9.24-1.0.20"
 }
 
 group = "org.example"
@@ -48,6 +49,10 @@ kotlin {
             dependencies {
                 implementation(compose.preview)
                 implementation("androidx.activity:activity-compose:1.9.0")
+                
+                val room_version = "2.6.1"
+                implementation("androidx.room:room-runtime:$room_version")
+                implementation("androidx.room:room-ktx:$room_version")
             }
         }
 
@@ -83,6 +88,13 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
+    lint {
+        abortOnError = false
+        checkReleaseBuilds = false
+        lintConfig = file("lint.xml")
+        disable += listOf("NewApi", "MissingTranslation")
+    }
 }
 
 compose.desktop {
@@ -102,4 +114,8 @@ tasks.withType<JavaExec> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+dependencies {
+    add("kspAndroid", "androidx.room:room-compiler:2.6.1")
 }

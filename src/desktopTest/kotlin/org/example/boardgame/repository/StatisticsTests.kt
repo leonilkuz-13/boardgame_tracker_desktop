@@ -1,7 +1,6 @@
-package integrationtests.statisticstests
+package org.example.boardgame.repository
 
-import repository.DatabaseManager
-import repository.StatisticsImpl
+import org.example.boardgame.db.dao.JdbcPlayerDao
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 
@@ -16,7 +15,7 @@ class StatisticsImplTests {
         DatabaseManager.getConnection().use { conn ->
             conn.createStatement().execute("DELETE FROM Players")
         }
-        statistics = StatisticsImpl()
+        statistics = StatisticsImpl(JdbcPlayerDao())
     }
 
     @Test
@@ -51,7 +50,7 @@ class StatisticsImplTests {
     }
 
     @Test
-    fun `getTopPlayers should sort by winRate and then by wins`() {
+    fun `getTopPlayers should sort by wins`() {
         statistics.createPlayer("Pro")
         statistics.saveMatchResult("Pro", true)
         statistics.saveMatchResult("Pro", true)
