@@ -1,7 +1,6 @@
-package integrationtests.historytest
+package org.example.boardgame.repository
 
-import repository.DatabaseManager
-import repository.HistoryImpl
+import org.example.boardgame.db.dao.JdbcHistoryDao
 import battleship.*
 import common.*
 import org.junit.jupiter.api.*
@@ -13,10 +12,9 @@ class HistoryTest {
 
     @BeforeEach
     fun clearData() {
-        // 1. Переключаем Менеджер на тестовую базу
         DatabaseManager.dbUrl = "jdbc:sqlite:test_battleship.db"
         DatabaseManager.initDatabase()
-        history = HistoryImpl()
+        history = HistoryImpl(JdbcHistoryDao())
 
         DatabaseManager.getConnection().use { conn ->
             val statement = conn.createStatement()
@@ -88,8 +86,8 @@ class HistoryTest {
     }
 
     @Test
-    fun `non-existent match should return empty list`() {
+    fun `non-existent match should return null`() {
         val result = history.getMatchReplay(9999)
-        assertTrue(result?.isEmpty() ?: true)
+        assertNull(result)
     }
 }
