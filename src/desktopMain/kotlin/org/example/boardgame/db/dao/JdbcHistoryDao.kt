@@ -1,6 +1,7 @@
 package org.example.boardgame.db.dao
 
 import org.example.boardgame.repository.DatabaseManager
+import org.example.boardgame.db.entities.MatchEntity
 import org.example.boardgame.db.entities.MoveEntity
 import java.sql.Connection
 import java.sql.Statement
@@ -55,6 +56,24 @@ class JdbcHistoryDao : HistoryDao {
                     )
                 }
                 moves
+            }
+        }
+    }
+
+    override fun getMatch(matchId: Int): MatchEntity? {
+        val query = "SELECT id, player1_name, player2_name, winner_name FROM MATCHES WHERE id = ?"
+        return getNewConnection().use { connection ->
+            connection.prepareStatement(query).use { stmt ->
+                stmt.setInt(1, matchId)
+                val rs = stmt.executeQuery()
+                if (rs.next()) {
+                    MatchEntity(
+                        id = rs.getInt("id"),
+                        player1Name = rs.getString("player1_name"),
+                        player2Name = rs.getString("player2_name"),
+                        winnerName = rs.getString("winner_name")
+                    )
+                } else null
             }
         }
     }

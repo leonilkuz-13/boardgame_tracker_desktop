@@ -2,11 +2,11 @@
 'https://plantuml.com/class-diagram
 
 class Coordinate <<datatype>> {
-  +x: Int
+  +x: Char
   +y: Int
-  +isValid(boardSize: Int): Boolean
-  -distanceTo(other: Coordinate): Int
-  +dotAdjacentTo(other: Coordinate): Boolean
+  +isValid(): Boolean
+  +getNeighbors(): List<Coordinate>
+  {static} +parse(line: String): Coordinate?
 }
 
 enum Result {
@@ -24,12 +24,145 @@ enum CellStatus {
     BORDER
 }
 
-class GUI
-class BD
+package screens {
+    class LoginViewModel {
+        -gameManager: GameManager
+        +onPlayer1NameChange(name: String)
+        +onPlayer2NameChange(name: String)
+        +onStartGame()
+    }
+    class CombatViewModel {
+        -gameManager: GameManager
+        +onCellClicked(playerIndex: Int, x: Int, y: Int)
+        -syncStateWithEngine()
+    }
+    class GameResultViewModel {
+        -gameManager: GameManager
+        +onBackToMenu()
+    }
+    class MatchReplayViewModel {
+        -gameManager: GameManager
+        +nextStep()
+        +prevStep()
+        -rebuildBoards()
+    }
+    class LeaderboardViewModel {
+        -gameManager: GameManager
+        +loadLeaderboard()
+    }
+    class SetupViewModel {
+        -gameManager: GameManager
+        +onShipTypeSelected(type: ShipType)
+        +onRotateShip()
+        +onCellClicked(x: Int, y: Int)
+        +onNextPlayerClicked(): Boolean
+    }
+    class SpecialShipPickerViewModel {
+        +onShapeSelected(shape: SpecialShape)
+    }
+    class ShipSelectionViewModel {
+        -gameManager: GameManager
+        +onSpecialShapeSelected(playerName: String, shape: SpecialShape)
+    }
+    class PlayerStatsViewModel {
+        -gameManager: GameManager
+        +searchPlayer(name: String)
+    }
+}
+
+package repository {
+    interface History {
+        +saveMatch(p1: String, p2: String, winner: String, log: List<Pair>)
+        +getMatchReplay(matchId: Int): List<Pair>?
+        +getMatchSummary(matchId: Int): MatchSummary?
+    }
+    interface Statistics {
+        +getPlayerStats(playerName: String): PlayerStats?
+        +getTopPlayers(limit: Int): List<PlayerStats>
+        +saveMatchResult(playerName: String, isWin: Boolean)
+        +createPlayer(playerName: String)
+    }
+}
+
+package DAO {
+    package AndroidDAO {
+        interface HistoryDao {
+            +insertMatch(match: MatchEntity): Long
+            +insertMove(move: MoveEntity)
+            +insertMoves(moves: List<MoveEntity>)
+            +saveMatchWithMoves(match: MatchEntity, moves: List<MoveEntity>)
+            +getMovesByMatchId(matchId: Int): List<MoveEntity>
+            +getMatchById(matchId: Int): MatchEntity?
+        }
+        interface PlayerDao {
+            +getPlayerByName(playerName: String): PlayerEntity?
+            +getTopPlayers(limit: Int): List<PlayerEntity>
+            +insertPlayer(player: PlayerEntity)
+            +incrementWins(playerName: String)
+            +incrementLosses(playerName: String)
+        }
+    }
+    package DesktopDAO {
+        interface HistoryDao {
+            +insertMatch(connection: Connection, p1: String, p2: String, winner: String): Int
+            +insertMove(connection: Connection, matchId: Int, turn: Int, action: String, coords: String, result: String, shipType: String?)
+            +getMoves(matchId: Int): List<MoveEntity>
+            +getMatch(matchId: Int): MatchEntity?
+        }
+        interface PlayerDao {
+            +getPlayerByName(name: String): PlayerEntity?
+            +getTopPlayers(limit: Int): List<PlayerEntity>
+            +createPlayer(name: String)
+            +updateStats(name: String, isWin: Boolean)
+        }
+    }
+}
+
+
+class GameManager {
+    +getMyBoardStatusGrid(): List<List<CellStatus>>
+    +getEnemyBoardStatusGrid(): List<List<CellStatus>>
+    +getMatchSummary(matchId: Int): MatchSummary?
+}
+
+interface PlayerManager {
+    +loginPlayer(playerName: String): ManagerResult
+    +getPlayerStats(name: String): PlayerStats?
+    +getLeaderboard(): List<PlayerStats>
+    +getPlayer1Name(): String?
+    +getPlayer2Name(): String?
+    +getCurrentPlayerName(): String
+}
+
+interface MatchManager {
+    +startMatch(): ManagerResult
+    +startGame(): MoveResult.Error?
+    +abortMatch()
+    +handleMove(action: Move): MoveResult
+    +switchTurn()
+    +setSpecialShip(playerName: String, shape: SpecialShape)
+    +getSpecialShip(playerName: String): SpecialShape?
+    +getMatchHistory(id: Int): List<Pair<Move, MoveResult>>?
+}
+
+interface ViewManager {
+    +getPlayer1Board(): List<List<CellStatus>>
+    +getPlayer2Board(): List<List<CellStatus>>
+    +getPlayer1ViewOfEnemy(): List<List<CellStatus>>
+    +getPlayer2ViewOfEnemy(): List<List<CellStatus>>
+    +getPlayer1Ships(): List<Ship>
+    +getPlayer2Ships(): List<Ship>
+}
 
 class Game {
-    +player: Player
-    +move(action: Move) : Result
+    +player1: Player
+    +player2: Player
+    +move(action: Move) : MoveResult
+    +getWinner(): TurnOwner?
+    +getHistory(): List<Pair<Move, MoveResult>>
+    +getCurrentTurnOwner(): TurnOwner
+    +startGame(): MoveResult.Error?
+    +switchTurn()
 }
 
 class Board {
@@ -42,6 +175,7 @@ class Board {
     +addShip(ship: Ship)
     +getShipAt(coordinate: Coordinate): Ship?
     +hasAliveShips(): Boolean
+    +getShips(): List<Ship>
 }
 
 class Player {
@@ -49,37 +183,39 @@ class Player {
     +radarCharges: Int
     +bomberCharges: Int
     +myBoard: Board
-    +enemyBoard: Board
-    -hasRadar(): Boolean
-    -hasBomber(): Boolean
-    +useRadar(): Unit
-    +useBomber(): Unit
+    +ships: List<Ship>
+    +useRadar(): Boolean
+    +useBomber(): Boolean
 }
 
 class EnemyBoardEngine {
-    +process(action: Move, board: Board): Result
+    +process(action: Move, board: Board): MoveResult
 }
 
 class scan {
     -isValidScan(coordinates: List<Coordinate>, enemyBoard: Board): Boolean
-    +scan(coordinates: List<Coordinate>, enemyBoard: Board) : ScanResult
+    +scan(coordinates: List<Coordinate>, enemyBoard: Board) : MoveResult
 }
 
 class Attack {
-    +handle(action: Move, board: Board): Result
+    +handle(action: Move, board: Board): MoveResult
     -isCellUntouched(coordinate: Coordinate, board: Board): Boolean
     -isValidAttack(action: Move, board: Board): Boolean
-    -singleAttack(coordinate: Coordinate, board: Board): Result
-    -bomberAttack(coordinates: List<Coordinate>, board: Board): Result
+    +getCoordinatesAroundSunkShip(ship: Ship, board: Board): Set<Coordinate>
+    -singleAttack(coordinate: Coordinate, board: Board): MoveResult
+    -bomberAttack(coordinates: List<Coordinate>, board: Board): MoveResult
 }
 
 class MyBoardEngine {
-    +process(action: Move, myBoard: Board): Result
+    +process(action: Move, myBoard: Board): MoveResult
     +installShip(coordinates: List<Coordinate>): Boolean
-    +isValidMyBoardEngine(coordinate: Coordinate, MyBoard: Board): Boolean
+    +isValidMyBoardEngine(coordinate: Coordinate, myBoard: Board): Boolean
 }
 
 abstract class Ship {
+    +coordinates: List<Coordinate>
+    +type: ShipType
+    +shape: SpecialShape?
     +receiveHit(coordinate: Coordinate)
     +isSunk(): Boolean
 }
@@ -101,16 +237,65 @@ class SingleAttack <<datatype>> {
     +coordinate: Coordinate
 }
 class GrandAttack <<datatype>> {
-    +coordinates: List<Coordinate>
+    +coordinate: Coordinate
 }
 class Radar <<datatype>> {
     +coordinate: Coordinate
 }
 
-class ScanResult <<datatype>> {
-    +status: Result
-    +data: Map<Coordinate, CellStatus>
+' --- MoveResult (Isolate) ---
+abstract class MoveResult <<sealed>> {
 }
+
+class ShipInstall {
+    +shipCoordinates: List<Coordinate>
+    +borderCoordinates: Set<Coordinate>
+    +shipType: ShipType?
+}
+
+class ScanResult {
+    +info: Map<Coordinate, CellStatus>
+}
+
+class GrandResult {
+    +results: List<Success>
+}
+
+abstract class Success {
+    +coordinate: Coordinate
+}
+
+class Miss
+class Hit
+class Sunk {
+    +affectedCoordinates: Set<Coordinate>
+    +shipType: ShipType?
+}
+class Over {
+    +affectedCoordinates: Set<Coordinate>
+    +shipType: ShipType?
+}
+
+abstract class Error {
+    +reason: String
+}
+class GameError
+class InvalidMove
+
+MoveResult <|-- ShipInstall
+MoveResult <|-- ScanResult
+MoveResult <|-- GrandResult
+MoveResult <|-- Success
+MoveResult <|-- Error
+
+Success <|-- Miss
+Success <|-- Hit
+Success <|-- Sunk
+Success <|-- Over
+
+Error <|-- GameError
+Error <|-- InvalidMove
+' --------------------------
 
 Move <|-- Install
 Move <|-- SingleAttack
@@ -125,23 +310,28 @@ Ship <|-- BattleWagon
 Ship <|-- SpecialShip
 
 Game *-- Player : владеет
-Player *-- "2" Board : содержит (my & enemy)
+Player *-- Board : содержит
 Board o-- Ship
 
 Game o-- EnemyBoardEngine
 Game o-- MyBoardEngine
-Game o-- BD
 
-Game ..> Move : обрабатывает
-GUI <-> Game : взаимодействует
 EnemyBoardEngine ..> scan : использует
 EnemyBoardEngine ..> Attack : использует
 Attack ..> Board : меняет состояние Map
 Attack ..> Ship : вызывает receiveHit
-scan ..> ScanResult : порождает
 MyBoardEngine ..> Ship : размещает
 
-Result <.. Game
 CellStatus <.. Board
+
+PlayerManager <|.. GameManager
+MatchManager <|.. GameManager
+ViewManager <|.. GameManager
+
+GameManager *-- Game
+screens o-- GameManager
+
+GameManager o-- repository
+repository *-- DAO
 
 @enduml

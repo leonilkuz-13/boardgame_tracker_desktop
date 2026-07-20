@@ -6,6 +6,7 @@ import org.example.boardgame.db.daos.HistoryDao
 import org.example.boardgame.db.entities.MatchEntity
 import org.example.boardgame.db.entities.MoveEntity
 import repository.History
+import repository.MatchSummary
 
 class AndroidHistoryImpl(private val historyDao: HistoryDao) : History {
 
@@ -62,21 +63,31 @@ class AndroidHistoryImpl(private val historyDao: HistoryDao) : History {
         }
     }
 
+    override fun getMatchSummary(matchId: Int): MatchSummary? {
+        val entity = historyDao.getMatchById(matchId) ?: return null
+        return MatchSummary(
+            id = entity.id,
+            player1Name = entity.player1_name,
+            player2Name = entity.player2_name,
+            winnerName = entity.winner_name
+        )
+    }
+
     private fun parseMove(actionType: String, coordinatesStr: String, parsedShipType: ShipType?): Move? {
-        return when (actionType) {
-            "SingleAttack" -> {
+        return when (actionType.lowercase()) {
+            "singleattack" -> {
                 val coordinate = Coordinate.parse(coordinatesStr)
                 if (coordinate != null) Move.SingleAttack(coordinate) else null
             }
-            "GrandAttack" -> {
+            "grandattack" -> {
                 val coordinate = Coordinate.parse(coordinatesStr)
                 if (coordinate != null) Move.GrandAttack(coordinate) else null
             }
-            "Radar" -> {
+            "radar" -> {
                 val coordinate = Coordinate.parse(coordinatesStr)
                 if (coordinate != null) Move.Radar(coordinate) else null
             }
-            "Install" -> {
+            "install" -> {
                 val coordinates = coordinatesStr.split(", ").mapNotNull { Coordinate.parse(it) }
                 if (parsedShipType == null) return null
                 val ship: Ship = when(parsedShipType) {
@@ -97,16 +108,16 @@ class AndroidHistoryImpl(private val historyDao: HistoryDao) : History {
         val firstCoordinate = coordinates.split(", ").firstOrNull() ?: ""
         val coordinate = Coordinate.parse(firstCoordinate)
 
-        if (coordinate == null && result != "ShipInstall") return null
+        if (coordinate == null && result.lowercase() != "shipinstall") return null
 
-        return when (result) {
-            "Hit" -> MoveResult.Success.Hit(coordinate!!)
-            "Miss" -> MoveResult.Success.Miss(coordinate!!)
-            "Sunk" -> MoveResult.Success.Sunk(coordinate!!, emptySet(), parsedShipType)
-            "Over" -> MoveResult.Success.Over(coordinate!!, emptySet(), parsedShipType)
-            "ScanResult" -> MoveResult.ScanResult(emptyMap())
-            "GrandResult" -> MoveResult.GrandResult(emptyList())
-            "ShipInstall" -> {
+        return when (result.lowercase()) {
+            "hit" -> MoveResult.Success.Hit(coordinate!!)
+            "miss" -> MoveResult.Success.Miss(coordinate!!)
+            "sunk" -> MoveResult.Success.Sunk(coordinate!!, emptySet(), parsedShipType)
+            "over" -> MoveResult.Success.Over(coordinate!!, emptySet(), parsedShipType)
+            "scanresult" -> MoveResult.ScanResult(emptyMap())
+            "grandresult" -> MoveResult.GrandResult(emptyList())
+            "shipinstall" -> {
                 val allCoordinates = coordinates.split(", ").mapNotNull { Coordinate.parse(it) }
                 MoveResult.ShipInstall(allCoordinates, emptySet(), parsedShipType)
             }

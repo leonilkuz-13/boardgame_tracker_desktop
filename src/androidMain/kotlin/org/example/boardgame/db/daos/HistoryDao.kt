@@ -24,4 +24,7 @@ interface HistoryDao {
 
     @Query("SELECT * FROM Moves WHERE match_id = :matchId ORDER BY turn_number ASC")
     fun getMovesByMatchId(matchId: Int): List<MoveEntity>
+
+    @Query("SELECT * FROM Matches WHERE id = :matchId")
+    fun getMatchById(matchId: Int): MatchEntity?
 }
