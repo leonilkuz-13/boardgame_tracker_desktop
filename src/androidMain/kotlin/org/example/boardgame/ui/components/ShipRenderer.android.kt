@@ -48,12 +48,7 @@ actual fun ShipRenderer(
     Box(
         modifier = Modifier
             .offset(x = offsetX, y = offsetY)
-            // ИСПРАВЛЕНИЕ 1: Жесткая фиксация общего контейнера корабля
-            .requiredSize(drawWidth, drawHeight)
-        // ТЕСТОВЫЙ ФОН: раскомментируй строку ниже, чтобы проверить свои PNG на "пустые края"
-        // .background(Color.Red.copy(alpha = 0.5f))
-        ,
-        // ИСПРАВЛЕНИЕ 2: Ставим по центру! Это магия, которая позволяет вращать картинку идеально
+            .requiredSize(drawWidth, drawHeight),
         contentAlignment = Alignment.Center
     ) {
         Image(
@@ -62,10 +57,8 @@ actual fun ShipRenderer(
             contentScale = ContentScale.FillBounds,
             modifier = if (isVertical) {
                 Modifier
-                    // ИСПРАВЛЕНИЕ 3: Изображение рисуем горизонтальным (меняем местами width и height)
                     .requiredSize(width = drawHeight, height = drawWidth)
                     .graphicsLayer {
-                        // Вращаем вокруг центра (по умолчанию). Никаких костылей с translationX!
                         rotationZ = 90f
                     }
             } else {

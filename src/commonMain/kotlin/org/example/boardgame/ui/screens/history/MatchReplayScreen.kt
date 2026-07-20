@@ -31,7 +31,6 @@ fun MatchReplayScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // --- HEADER ---
             Text(
                 "Match Replay (ID: ${viewModel.matchId})",
                 fontSize = 22.sp,
@@ -57,17 +56,10 @@ fun MatchReplayScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // --- BOARDS ---
-            // On desktop/tablet we might want Row, but for most screens Column is safer for "larger" boards.
-            // However, the screenshot shows them side-by-side. 
-            // To make them TRULY larger, we should probably stack them on mobile or use a HorizontalPager.
-            // But I will keep Row and just increase size to fill width.
-            
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                // Player 1 Board
                 Column(
                     modifier = Modifier.weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -90,7 +82,6 @@ fun MatchReplayScreen(
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                // Player 2 Board
                 Column(
                     modifier = Modifier.weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -114,7 +105,6 @@ fun MatchReplayScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // --- CONTROLS ---
             Row(
                 modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly

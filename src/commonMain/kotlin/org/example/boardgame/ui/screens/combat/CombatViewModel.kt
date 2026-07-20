@@ -47,10 +47,7 @@ class CombatViewModel(
     private fun syncStateWithEngine() {
         val name = gameManager.getCurrentPlayerName()
         val index = if (name.contains("1")) 1 else 2
-        
-        // Mock items for now as engine doesn't expose them easily via manager yet
-        // In a real scenario, we'd add getRadarCharges(playerIndex) to GameManager
-        
+
         _uiState.update { currentState ->
             currentState.copy(
                 p1RealBoard = gameManager.getPlayer1Board(),

@@ -37,7 +37,6 @@ fun BattleGrid(
         val totalGridSize = cellSize * (boardSize + 1)
 
         Box(modifier = Modifier.requiredSize(totalGridSize)) {
-            // --- 1. WHITE BACKGROUND FOR THE GRID AREA ---
             Box(
                 modifier = Modifier
                     .offset(x = cellSize, y = cellSize)
@@ -45,7 +44,6 @@ fun BattleGrid(
                     .background(Color.White)
             )
 
-            // --- 2. LABELS (A-O, 1-15) ---
             ('A' until 'A' + boardSize).forEachIndexed { i, char ->
                 Box(
                     modifier = Modifier
@@ -80,7 +78,6 @@ fun BattleGrid(
                 }
             }
 
-            // --- 3. CELLS (Transparent, but handle interaction) ---
             for (y in 1..boardSize) {
                 for (i in 0 until boardSize) {
                     val xChar = ('A'.code + i).toChar()
@@ -95,7 +92,6 @@ fun BattleGrid(
                 }
             }
 
-            // --- 4. GRID LINES (Drawn ON TOP of cells for visibility) ---
             Canvas(
                 modifier = Modifier
                     .offset(x = cellSize, y = cellSize)
@@ -125,7 +121,6 @@ fun BattleGrid(
                 }
             }
 
-            // --- 5. SHIPS ---
             ships.forEach { ship ->
                 if (ship.coordinates.isNotEmpty()) {
                     val minXChar = ship.coordinates.minOf { it.x }

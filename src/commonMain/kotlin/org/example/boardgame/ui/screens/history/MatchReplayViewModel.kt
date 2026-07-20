@@ -51,9 +51,6 @@ class MatchReplayViewModel(val matchId: Int, private val gameManager: GameManage
             applyMoveToGrids(move, result, newP1, newP2, i % 2 == 0)
             
             if (result is MoveResult.Success.Over) {
-                // Determine winner from history logic (usually the one who made the last move if it's Over)
-                // However, in our system, the game knows the winner.
-                // We'll just check if this is the last step.
                 if (i == history.size - 1) {
                     isFinished = true
                 }
@@ -78,8 +75,6 @@ class MatchReplayViewModel(val matchId: Int, private val gameManager: GameManage
                 updateCell(targetGrid, move.coordinate, result)
             }
             is Move.Install -> {
-                // If we want to show installations, we would update the grid here.
-                // But usually replay starts after setup.
                 move.coordinates.forEach { updateCell(if (isPlayer1Turn) p1 else p2, it, result) }
             }
             is Move.Radar -> {
