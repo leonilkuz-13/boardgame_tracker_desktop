@@ -3,6 +3,7 @@ package org.example.boardgame.repository
 import battleship.*
 import common.*
 import repository.History
+import repository.MatchSummary
 import org.example.boardgame.db.dao.HistoryDao
 import org.example.boardgame.db.entities.MoveEntity
 
@@ -80,6 +81,16 @@ class HistoryImpl(private val historyDao: HistoryDao) : History {
         }
         
         return if (replayLog.isEmpty()) null else replayLog
+    }
+
+    override fun getMatchSummary(matchId: Int): MatchSummary? {
+        val entity = historyDao.getMatch(matchId) ?: return null
+        return MatchSummary(
+            id = entity.id,
+            player1Name = entity.player1Name,
+            player2Name = entity.player2Name,
+            winnerName = entity.winnerName
+        )
     }
 
     private fun parseMove(actionType: String, coordinatesStr: String, parsedShipType: ShipType?): Move? {

@@ -1,20 +1,14 @@
 package gamemanager
 
-import common.PlayerStats
-import common.ManagerResult
-import common.Move
-import common.MoveResult
+import gamemanager.interfaces.PlayerManager
+import gamemanager.interfaces.MatchManager
+import gamemanager.interfaces.ViewManager
+import common.CellStatus
+import repository.MatchSummary
 
-
-interface GameManager {
-    fun loginPlayer(playerName: String): ManagerResult // синхронизация имени, введеное игроком с базой
-    fun getLeaderboard(): List<PlayerStats> // лидерборд (прокид к view)
-    fun getPlayerProfile(name: String): PlayerStats? // статистика профиля по имени (прокид к view)
-    fun getMatchHistory(id: Int): List<Pair<Move, MoveResult>>?  // история партии по id из базы (прокид к view)
-    fun handleMove(action: Move): MoveResult // переход по действию в game
-    fun startMatch(): ManagerResult // вот именно тут будет происходить создание player, досок для него и тд
-    fun startGame(): MoveResult.Error? // функция нужна для переключения состояния state в Game (контринтуитивно, но возвращает null, если все норм)
-    fun getCurrentPlayerName() : String // получить имя игрока, который сейчас ходит (для отображения в интерфейсе)
-    fun switchTurn() // переключать состояния при расстановке
-    fun abortMatch() // прерывание матча
+interface GameManager : PlayerManager, MatchManager, ViewManager {
+    // Compatibility methods (can be removed if unused)
+    fun getMyBoardStatusGrid(): List<List<CellStatus>>
+    fun getEnemyBoardStatusGrid(): List<List<CellStatus>>
+    fun getMatchSummary(matchId: Int): MatchSummary?
 }

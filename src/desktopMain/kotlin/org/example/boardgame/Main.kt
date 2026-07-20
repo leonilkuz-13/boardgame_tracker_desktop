@@ -1,6 +1,6 @@
 package org.example.boardgame
 
-import console.ConsoleImpl
+import org.example.boardgame.console.ConsoleImpl
 
 fun main() {
     val app = ConsoleImpl()

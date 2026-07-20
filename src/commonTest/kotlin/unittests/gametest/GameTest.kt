@@ -1,5 +1,6 @@
 package unittests.gametest
 
+import battleship.Ship
 import battleship.Submarine
 import board.Board
 import board.BoardImpl
@@ -116,6 +117,7 @@ class FakePlayer(
     override var bomberCharges: Int,
 ) : Player {
     override val myBoard: Board = BoardImpl()
+    override val ships: List<Ship> = emptyList()
 
     var simulateBomberEmpty = false
 
